@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  deployment-initcontainer
+spec:
+  selector:
+    matchLabels:
+      app: deployment-initcontainer
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  deployment-initcontainer
+    spec:
+      initContainers:
+        - name: init
+          image: ubuntu
+          command: ["apt-get", "update"]
+      containers:
+      - name:  deployment-initcontainer
+        image:  ubuntu
+        resources: {}

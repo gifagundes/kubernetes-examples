@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  deployment-hostpath-pv
+spec:
+  selector:
+    matchLabels:
+      app: deployment-hostpath-pv
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  deployment-hostpath-pv
+    spec:
+      containers:
+      - name: deployment-hostpath-pv
+        image: nginx
+        resources: {}
+        volumeMounts:
+        - name: datafiles
+          mountPath: /shared/deployment-hostpath-pv
+      volumes:
+        - name: datafiles
+          persistentVolumeClaim:
+            claimName: hostpath-pvc

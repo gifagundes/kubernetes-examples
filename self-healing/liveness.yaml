@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  deployment-liveness
+spec:
+  selector:
+    matchLabels:
+      app: deployment-liveness
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  deployment-liveness
+    spec:
+      containers:
+      - name:  deployment-liveness
+        image:  k8s.gcr.io/goproxy:0.1
+        resources: {}
+        livenessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 15 # Delay para iniciar
+          periodSeconds: 10 # De quanto em quanto tempo vai verificar
+          failureThreshold: 3 # Se tiver x falhas seguidas vai ignorar os sucessos e considerar não pronto
+          timeoutSeconds: 5 # QUanto é o tempo de downtime para considerar que deu problema
+       

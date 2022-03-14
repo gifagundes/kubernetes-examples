@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  deployment-hostpath
+spec:
+  selector:
+    matchLabels:
+      app: deployment-hostpath
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  deployment-hostpath
+    spec:
+      containers:
+      - name: deployment-hostpath
+        image: nginx
+        resources: {}
+        volumeMounts:
+        - name: datafiles
+          mountPath: /volume
+      volumes:
+        - name: datafiles
+          hostPath:
+            path: /shared/deployment-hostpath

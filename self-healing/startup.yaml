@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  deployment-startup
+spec:
+  selector:
+    matchLabels:
+      app: deployment-startup
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  deployment-startup
+    spec:
+      containers:
+      - name:  deployment-startup
+        image:  k8s.gcr.io/goproxy:0.1
+        resources: {}
+        startupProbe:
+          tcpSocket:
+            port: 80
+          periodSeconds: 10
+          initialDelaySeconds: 200
+          failureThreshold: 30

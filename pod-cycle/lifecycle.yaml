@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  deployment-podstart-podstop
+spec:
+  selector:
+    matchLabels:
+      app: deployment-podstart-podstop
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  deployment-podstart-podstop
+    spec:
+      containers:
+      - name:  deployment-podstart-podstop
+        image:  nginx
+        resources: {}
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - "curl"
+                - "https://www.google.com.br"
+          preStop:
+            exec:
+              command:
+                - "curl"
+                - "https://www.google.com.br"
+          
+        

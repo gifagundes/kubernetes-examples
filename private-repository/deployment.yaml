@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  deployment-secret-registry
+spec:
+  selector:
+    matchLabels:
+      app: deployment-secret-registry
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  deployment-secret-registry
+    spec:
+      containers:
+      - name:  deployment-secret-registry
+        image: gfagundes/pedelogo-catalogo:v1
+        resources: {}
+      imagePullSecrets:
+        - name: dcr-secret

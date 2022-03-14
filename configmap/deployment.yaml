@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  deployment-configmap
+spec:
+  selector:
+    matchLabels:
+      app: deployment-configmap
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  deployment-configmap
+    spec:
+      containers:
+      - name:  deployment-configmap
+        image:  mongo
+        resources: {}
+        envFrom:
+          - configMapRef:
+              name: configmap
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  deployment-configmap-mapkey
+spec:
+  selector:
+    matchLabels:
+      app: deployment-configmap-mapkey
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  deployment-configmap-mapkey
+    spec:
+      containers:
+      - name:  deployment-configmap-mapkey
+        image:  mongo
+        resources: {}
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                key: MONGO_INITDB_ROOT_USERNAME
+                name: configmap
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                key: MONGO_INITDB_ROOT_PASSWORD
+                name: configmap
+

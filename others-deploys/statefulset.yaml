@@ -1,0 +1,42 @@
+# Install in the server
+# https://www.tecmint.com/install-nfs-server-on-ubuntu/
+# Install  in the machine 
+# sudo apt install nfs-common
+# Install the provisioner for storageclass https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner
+
+# Install the provisioner
+# $ helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+# $ helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --set nfs.server=XXXX --set nfs.path=/shared/storage-dynamic
+
+# Helper to volume https://www.youtube.com/watch?v=vjCPrzegu8A
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefulset
+spec:
+  selector:
+    matchLabels:
+      app: statefulset
+  serviceName: "service-statefulset"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: statefulset
+    spec:
+      containers:
+      - name: statefulset
+        image: nginx
+        volumeMounts:
+        - name: www
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+  - metadata:
+      name: www
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "nfs-client"
+      resources:
+        requests:
+          storage: 1Gi

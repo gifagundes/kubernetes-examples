@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  deployment-readiness
+spec:
+  selector:
+    matchLabels:
+      app: deployment-readiness
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  deployment-readiness
+    spec:
+      containers:
+      - name:  deployment-readiness
+        image:  k8s.gcr.io/goproxy:0.1
+        resources: {}
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 15 # Delay para iniciar
+          periodSeconds: 10 # De quanto em quanto tempo vai verificar
+          successThreshold: 2 # Quantas vezes precisa ter sucesso para estar OK
+          failureThreshold: 3 # Se tiver x falhas seguidas vai ignorar os sucessos e considerar não pronto
