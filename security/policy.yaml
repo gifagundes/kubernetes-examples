@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  deployment-network-policy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deployment-network-policy
+  template:
+    metadata:
+      labels:
+        app:  deployment-network-policy
+    spec:
+      containers:
+      - name:  nginx
+        image: nginx
+        ports:
+          - containerPort: 80
+        resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-networking-policy
+spec:
+  selector:
+    app: deployment-network-policy
+  type: ClusterIP
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: policy
+spec:
+  podSelector:
+    matchLabels:
+      app: deployment-network-policy
+  policyTypes:
+    - "Ingress"
+    - "Egress"
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 172.17.0.0/16
+        except:
+        - 172.17.1.0/24
+    - podSelector:
+        matchLabels:
+          app: external
+    - namespaceSelector:
+        matchLabels:
+          ns: workspace
+    ports:
+    - port: 80
+      protocol: TCP
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: external
+    - namespaceSelector:
+        matchLabels:
+          ns: workspace
+    ports:
+    - port: 80
+      protocol: TCP
+#Execute to test
+#kubectl run -i --tty -n default -l app=external --image kubedevio/ubuntu-curl test --restart=Never --rm -- curl http://service-networking-policy
